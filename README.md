@@ -27,6 +27,8 @@ The app uses email OTP verification, JWT sessions, campus access checks, profile
 | Frontend | https://campuslink-theta.vercel.app |
 | Backend API | https://campus-link-den.netlify.app |
 
+> Showcase note: the public demo accepts any email address for login, making it easy for reviewers to explore the app without needing access to a college-domain inbox.
+
 ## Product Flow
 
 ```text
@@ -163,6 +165,7 @@ Create local `.env` files for the frontend and backend before running the app.
 ## Build Notes
 
 - Netlify Functions are suitable for the HTTP API, but Socket.IO realtime chat needs a long-running Node server or a dedicated realtime service for production.
+- The showcase deployment accepts any email address for login so reviewers can test the app without a college-domain inbox.
 - Campus network access depends on correctly configured IP ranges.
 - Production email delivery depends on valid SMTP credentials.
 - The public showcase repository excludes secrets, local environment files, dependencies, and build outputs.
