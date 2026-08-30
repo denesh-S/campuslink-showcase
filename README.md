@@ -1,65 +1,71 @@
+<div align="center">
+
 # CampusLink
 
-CampusLink is an anonymous campus chat platform built for students on the same college network. It lets students verify with an email OTP, create an account, and meet other students through text, audio, and video matching.
+**Anonymous campus matching for students on the same college network.**
 
-The goal of the project is simple: make it easier for students to talk to people on campus without the awkward first move.
+CampusLink verifies students with college email OTP, then gives them a lightweight way to meet people on campus through text, audio, and video chat flows.
 
-## Live Project
+<br />
 
-- Frontend: https://campuslink-theta.vercel.app
-- Backend API: https://campus-link-den.netlify.app
+[![Frontend](https://img.shields.io/badge/Frontend-Vercel-171717?style=for-the-badge&logo=vercel&logoColor=white)](https://campuslink-theta.vercel.app)
+[![Backend](https://img.shields.io/badge/API-Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://campus-link-den.netlify.app)
+![Stack](https://img.shields.io/badge/Stack-React%20%2B%20Express%20%2B%20PostgreSQL-0070f3?style=for-the-badge)
 
-## What I Built
+</div>
 
-CampusLink is a full-stack web application with separate frontend and backend deployments.
+<br />
 
-- Anonymous student matching for text, audio, and video chats
-- College email OTP authentication
-- JWT-based login sessions
-- Campus-only access checks through IP ranges
-- User profiles with course, year, gender, and basic account data
-- Subscription plan structure for premium features
-- Admin/reporting tables for moderation workflows
-- PostgreSQL schema and migrations
-- Responsive frontend UI with light and dark mode support
-- Backend deployment through Netlify Functions
-- Frontend deployment through Vercel
+## Overview
+
+CampusLink is a full-stack student social platform designed around one simple campus habit: sometimes it is easier to start a conversation when the first move is anonymous.
+
+The app uses email OTP verification, JWT sessions, campus access checks, profile metadata, and a PostgreSQL-backed chat data model. The frontend is deployed on Vercel, while the backend HTTP API runs through Netlify Functions.
+
+| Surface | Link |
+|---|---|
+| Frontend | https://campuslink-theta.vercel.app |
+| Backend API | https://campus-link-den.netlify.app |
+
+## Product Flow
+
+```text
+Student email
+    -> domain validation
+    -> OTP delivery
+    -> JWT session
+    -> profile setup
+    -> anonymous match
+    -> text, audio, or video chat
+```
+
+## Features
+
+| Area | What CampusLink supports |
+|---|---|
+| Authentication | College email OTP login with hashed verification codes |
+| Sessions | JWT-based login sessions and refresh-token structure |
+| Matching | Anonymous student matching for text, audio, and video modes |
+| Access | Campus-only access checks through configured IP ranges |
+| Profiles | Course, year, gender, and basic student account metadata |
+| Moderation | Reports, user blocks, audit logs, and admin-ready tables |
+| Monetization | Subscription plan and subscription table structure |
+| Deployment | Split frontend/backend production deployment |
 
 ## Tech Stack
 
-Frontend:
-
-- React
-- Vite
-- Tailwind CSS
-- Framer Motion
-- Lucide React icons
-
-Backend:
-
-- Node.js
-- Express
-- Socket.IO
-- PostgreSQL
-- JWT
-- Nodemailer
-- Razorpay integration structure
-- Netlify Functions for HTTP API deployment
-
-Database:
-
-- PostgreSQL
-- Neon for hosted production database
-
-Deployment:
-
-- Vercel for frontend
-- Netlify for backend HTTP API
-- GitHub for source control and continuous deployment
+| Layer | Tools |
+|---|---|
+| Frontend | React, Vite, Tailwind CSS, Framer Motion, Lucide React |
+| Backend | Node.js, Express, Socket.IO, JWT, Nodemailer |
+| Database | PostgreSQL, Neon, SQL migrations |
+| Payments | Razorpay integration structure |
+| Hosting | Vercel frontend, Netlify Functions backend |
+| Source Control | GitHub |
 
 ## Architecture
 
-The project is organized as a monorepo with separate `frontend` and `backend` folders.
+The project is structured as a monorepo with separate frontend and backend applications.
 
 ```text
 campuslink/
@@ -82,93 +88,56 @@ campuslink/
       styles/
 ```
 
-The frontend talks to the backend through REST API routes under `/api`. The backend uses Express for HTTP routes and Socket.IO for realtime chat matching when running as a normal Node server.
+The frontend talks to the backend through REST routes under `/api`. The backend keeps the Express app separate from the local server entrypoint, which allows the same HTTP routes to run as a Netlify Function while still leaving a local Socket.IO server path available for development.
 
-For deployment, the Express app is separated from the local server startup code. This allows the same backend routes to run inside Netlify Functions while keeping the local Socket.IO server entrypoint available for development and server-based hosting.
+## Authentication
 
-## Authentication Flow
+CampusLink avoids password storage and keeps login short for students.
 
-1. The user enters their email address.
-2. The backend validates whether the email domain is allowed.
+1. The student enters a college email address.
+2. The backend checks whether the email domain is allowed.
 3. A six-digit OTP is generated and stored as a hash in PostgreSQL.
-4. The OTP is sent through SMTP using Nodemailer.
-5. The user submits the OTP.
-6. The backend verifies the OTP hash and creates a JWT session.
-7. The frontend stores the session and allows the user into the app.
+4. Nodemailer sends the OTP through SMTP.
+5. The student submits the OTP.
+6. The backend verifies the hash and creates a JWT session.
+7. The frontend stores the session and opens the app.
 
-This flow avoids password storage and keeps login lightweight for students.
+## Database Model
 
-## Database Design
+The first migration creates the core platform tables:
 
-The first migration creates the main application tables:
+| Domain | Tables |
+|---|---|
+| Identity | `users`, `otp_verifications`, `sessions` |
+| Chat | `chat_sessions`, `messages` |
+| Safety | `reports`, `user_blocks`, `audit_logs` |
+| Access | `campus_ip_ranges`, `rate_limit_log` |
+| Plans | `subscription_plans`, `subscriptions` |
 
-- `users`
-- `otp_verifications`
-- `sessions`
-- `subscription_plans`
-- `subscriptions`
-- `chat_sessions`
-- `messages`
-- `reports`
-- `user_blocks`
-- `audit_logs`
-- `campus_ip_ranges`
-- `rate_limit_log`
+Indexes are included for common lookup paths such as email, sessions, reports, chat sessions, and user roles.
 
-It also creates indexes for common lookup paths such as email, sessions, reports, chat sessions, and user roles.
+## Deployment
 
-## Development Process
+| Service | Responsibility |
+|---|---|
+| Vercel | Hosts the React frontend |
+| Netlify Functions | Hosts the Express HTTP API |
+| Neon | Hosts the production PostgreSQL database |
 
-I built CampusLink in stages:
+Production secrets are configured in the hosting dashboards, not committed to the repository.
 
-1. Planned the main student flow: verify, enter, match, chat.
-2. Built the backend schema and authentication routes.
-3. Added OTP email delivery and login/register flows.
-4. Created the frontend login, register, and main app screens.
-5. Added responsive UI styling and a dark mode toggle.
-6. Split the Express app from the local server entrypoint so the backend could run on Netlify Functions.
-7. Connected GitHub to Netlify and Vercel for continuous deployment.
-8. Migrated the production database to Neon.
-
-## Deployment Notes
-
-The frontend and backend are deployed separately:
-
-- Vercel serves the React frontend.
-- Netlify serves the Express HTTP API through a serverless function.
-- Neon hosts the production PostgreSQL database.
-
-Important environment variables are not committed to the repository. They must be configured in the deployment dashboards:
-
-- `DATABASE_URL`
-- `JWT_SECRET`
-- `REFRESH_TOKEN_SECRET`
-- `SMTP_HOST`
-- `SMTP_PORT`
-- `SMTP_USER`
-- `SMTP_PASS`
-- `EMAIL_FROM`
-- `FRONTEND_URL`
-- `COLLEGE_EMAIL_DOMAIN`
-
-## What I Learned
-
-This project helped me practice:
-
-- Designing a full-stack app from idea to deployment
-- Structuring an Express backend with controllers, middleware, services, and routes
-- Building OTP authentication securely with hashed codes
-- Working with PostgreSQL migrations and hosted databases
-- Handling production CORS and environment variables
-- Deploying a monorepo with separate frontend and backend platforms
-- Designing responsive UI states for authentication and app flows
-- Understanding the difference between serverless HTTP APIs and realtime WebSocket servers
-
-## Current Limitations
-
-- Netlify Functions are suitable for the HTTP API, but Socket.IO realtime chat needs a long-running Node server or another realtime service for production.
-- Campus network access depends on correctly configured IP ranges.
-- Production email delivery depends on valid SMTP credentials.
+```env
+DATABASE_URL=
+JWT_SECRET=
+REFRESH_TOKEN_SECRET=
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASS=
+EMAIL_FROM=
+FRONTEND_URL=
+COLLEGE_EMAIL_DOMAIN=
+```
 
 ## Running Locally
 
@@ -191,8 +160,23 @@ npm run dev
 
 Create local `.env` files for the frontend and backend before running the app.
 
+## Build Notes
+
+- Netlify Functions are suitable for the HTTP API, but Socket.IO realtime chat needs a long-running Node server or a dedicated realtime service for production.
+- Campus network access depends on correctly configured IP ranges.
+- Production email delivery depends on valid SMTP credentials.
+- The public showcase repository excludes secrets, local environment files, dependencies, and build outputs.
+
+## What This Project Demonstrates
+
+- Full-stack planning from product flow to deployment
+- Secure OTP authentication with hashed codes
+- Express route organization with controllers, middleware, services, and utilities
+- PostgreSQL schema design and migration workflow
+- Production CORS and environment-variable handling
+- Separate frontend and backend deployment pipelines
+- Responsive UI work with light and dark mode support
+
 ## Repository Status
 
-This repository is public so the project can be showcased on a CV and portfolio. Secret values, local environment files, build outputs, and dependencies are excluded through `.gitignore`.
-
-No license is included by default. That means the code is visible for review, but it is not explicitly open-sourced for reuse under a permissive license.
+This repository is public for portfolio and CV review. No license is included by default, so the code is visible for review but is not explicitly open-sourced for reuse under a permissive license.
