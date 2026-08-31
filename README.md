@@ -29,6 +29,24 @@ The app uses email OTP verification, JWT sessions, campus access checks, profile
 
 > Showcase note: the public demo accepts any email address for login, making it easy for reviewers to explore the app without needing access to a college-domain inbox.
 
+## Website Preview
+
+<table>
+<tr>
+<td><img src="screenshots/1.png" width="500"></td>
+<td><img src="screenshots/2.png" width="500"></td>
+</tr>
+<tr>
+<td><img src="screenshots/3.png" width="500"></td>
+<td><img src="screenshots/4.png" width="500"></td>
+</tr>
+<tr>
+<td colspan="2" align="center">
+<img src="screenshots/5.png" width="500">
+</td>
+</tr>
+</table>
+
 ## Product Flow
 
 ```text
